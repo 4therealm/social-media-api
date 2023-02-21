@@ -79,8 +79,6 @@ User.find({}).exec((err, collection) => {
   }
   return console.log(" Users is already populated");
 });
-UserSchema.virtual('friendCount').get(function() {
-  return this.friends.length;
-});
+
 
 module.exports = User;
