@@ -34,15 +34,21 @@ try {
 });
 
 router.post('/', async (req, res) => {
-  const {username, email, thoughts, friends} = req.body
-  User.create({
-    username,
-    email,
-    thoughts,
-    friends
-  })
-    .then(dbUserData => res.status(201).json(dbUserData))
-    .catch(err => res.status(500).json(err));
+  const {username, email, thoughts, friends} = req.body;
+  try {
+    const newUser = await User.create({
+      username,
+      email,
+      thoughts,
+      friends
+    })
+    res.status(201).json(newUser)
+  } catch (error) {
+    res.status(500).json(error);
+    
+  }
+  
+    
 });
 
 
@@ -100,17 +106,17 @@ router.post('/:userId/friends/:friendId', async (req, res) => {
 });
 
 // DELETE route for removing a friend from a user's friend list
-router.delete('/api/users/:userId/friends/:friendId', async (req, res) => {
+router.delete('/:userId/friends/:friendId', async (req, res) => {
   try {
     const { userId, friendId } = req.params;
     const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { $pull: { friends: friendId } },
+      ObjectId(userId),
+      { $pull: { friends: ObjectId(friendId) } },
       { new: true }
     );
     const updatedFriend = await User.findByIdAndUpdate(
-      friendId,
-      { $pull: { friends: userId } },
+      ObjectId(friendId),
+      { $pull: { friends: ObjectId(userId) } },
       { new: true }
     );
     res.status(200).json({ updatedUser, updatedFriend });
