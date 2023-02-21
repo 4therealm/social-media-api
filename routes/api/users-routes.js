@@ -45,16 +45,7 @@ router.post('/', async (req, res) => {
     .catch(err => res.status(500).json(err));
 });
 
-// router.put('/:username', (req, res) => {
-//   User.findByIdAndUpdate(ObjectId(userId), req.body, { new: true })
-//     .then(dbUserData => {
-//       if (!dbUserData) {
-//         return res.status(404).json({ message: 'No user found with this id!' });
-//       }
-//       res.json(dbUserData);
-//     })
-//     .catch(err => res.status(500).json(err));
-// });
+
 
 router.put('/:userId', async (req,res) => {
   const {userId} = req.params
@@ -71,21 +62,34 @@ router.put('/:userId', async (req,res) => {
 })
 
 
-
-router.delete('/:username', (req, res) => {
-  User.findByIdAndDelete({ username: req.params.username })
-    .then(dbUserData => {
-      if (!dbUserData) {
-        return res.status(404).json({ message: 'No user found with this username!' });
-      }
-      // remove user's associated thoughts from the database as well
-      return Thought.deleteMany({ username: dbUserData.username });
-    })
-    .then(() => {
-      res.json({ message: 'User and associated thoughts deleted!' });
-    })
-    .catch(err => res.status(500).json(err));
-});
+router.delete('/:userId', async (req, res) => {
+  const {userId} = req.params;
+  try {
+    const user = await User.findByIdAndDelete(ObjectId(userId));
+    if(!user) {
+      return res.status(404).json({ message: 'No user found with this username!' });
+    }
+    // remove user's associated thoughts from the database as well
+    await Thought.deleteMany({ userId: user.userId });
+    res.json({ message: 'User and associated thoughts deleted!' });
+  } catch (error) {
+    res.status(500).json(error)
+  }
+})
+// router.delete('/:username', (req, res) => {
+//   User.findByIdAndDelete({ username: req.params.username })
+//     .then(dbUserData => {
+//       if (!dbUserData) {
+//         return res.status(404).json({ message: 'No user found with this username!' });
+//       }
+//       // remove user's associated thoughts from the database as well
+//       return Thought.deleteMany({ username: dbUserData.username });
+//     })
+//     .then(() => {
+//       res.json({ message: 'User and associated thoughts deleted!' });
+//     })
+//     .catch(err => res.status(500).json(err));
+// });
 
 
 // POST route for adding a friend to a user's friend list
