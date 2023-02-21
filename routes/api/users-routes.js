@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const User = require('../../models/User')
+const Thought = require('../../models/Thought')
 
 router.get('/', async (req, res) => { 
   const users = await User.find().populate('thoughts friends'); 
@@ -59,7 +60,7 @@ router.delete('/:username', (req, res) => {
         return res.status(404).json({ message: 'No user found with this username!' });
       }
       // remove user's associated thoughts from the database as well
-      // return Thought.deleteMany({ username: dbUserData.username });
+      return Thought.deleteMany({ username: dbUserData.username });
     })
     .then(() => {
       res.json({ message: 'User and associated thoughts deleted!' });
@@ -69,7 +70,7 @@ router.delete('/:username', (req, res) => {
 
 
 // POST route for adding a friend to a user's friend list
-router.post('/api/users/:userId/friends/:friendId', async (req, res) => {
+router.post('/:userId/friends/:friendId', async (req, res) => {
   try {
     const { userId, friendId } = req.params;
     const updatedUser = await User.findByIdAndUpdate(
