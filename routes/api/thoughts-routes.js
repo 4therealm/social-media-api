@@ -1,14 +1,11 @@
 const router = require('express').Router();
 const Thought = require('../../models/Thought')
-const {
-  getSingleThought,
-  getThoughts,
-  createThought
-} = require('../../controllers/thoughtsController')
 
 
-router.route('/').get(getThoughts).post(createThought)
-router.route('/:thoughtId').get(getSingleThought)
+router.get('/', async (req, res) => { 
+  const thoughts = await Thought.find()
+  res.json(thoughts); 
+}); 
 
 
 

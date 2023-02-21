@@ -1,62 +1,63 @@
 const mongoose = require('mongoose');
-const faker = require('faker');
+const User = require('../models/User');
+const Thought = require('../models/Thought');
+const Reaction = require('../models/Reaction');
 
-const User = require('./models/User');
-const Thought = require('./models/Thought');
-const Reaction = require('./models/Reaction');
-
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/social-network', {
+// Connect to the database
+mongoose.connect('mongodb://localhost/socialNetworkDB', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
-  useFindAndModify: false,
+  useFindAndModify: false
 });
 
-// Seed users
-const userCount = 5;
-const users = [];
+// Create instances of the models
+const user1 = new User({
+  username: 'john_doe',
+  email: 'john_doe@example.com'
+});
 
-for (let i = 0; i < userCount; i++) {
-  const user = new User({
-    username: faker.internet.userName(),
-    email: faker.internet.email(),
-  });
-  users.push(user);
+const user2 = new User({
+  username: 'jane_doe',
+  email: 'jane_doe@example.com'
+});
+
+const thought1 = new Thought({
+  thoughtText: 'Hello, world!',
+  username: user1.username,
+  userId: user1._id
+});
+
+const thought2 = new Thought({
+  thoughtText: 'How are you doing today?',
+  username: user2.username,
+  userId: user2._id
+});
+
+// const reaction1 = new Reaction({
+//   reactionBody: '👍',
+//   username: user1.username,
+//   userId: user1._id,
+//   thoughtId: thought2._id
+// });
+
+// const reaction2 = new Reaction({
+//   reactionBody: '❤️',
+//   username: user2.username,
+//   userId: user2._id,
+//   thoughtId: thought1._id
+// });
+
+// Save the instances to the database
+async function seedDatabase() {
+  await user1.save();
+  await user2.save();
+  await thought1.save();
+  await thought2.save();
+  // await reaction1.save();
+  // await reaction2.save();
+  console.log('Dummy data seeded successfully!');
+  mongoose.connection.close();
 }
 
-// Seed thoughts
-const thoughtCount = 10;
-const thoughts = [];
-
-for (let i = 0; i < thoughtCount; i++) {
-  const randomUser = users[Math.floor(Math.random() * users.length)];
-  const thought = new Thought({
-    thoughtText: faker.lorem.sentence(),
-    username: randomUser.username,
-  });
-  thoughts.push(thought);
-}
-
-// Seed reactions
-const reactionCount = 20;
-const reactions = [];
-
-for (let i = 0; i < reactionCount; i++) {
-  const randomUser = users[Math.floor(Math.random() * users.length)];
-  const randomThought = thoughts[Math.floor(Math.random() * thoughts.length)];
-  const reaction = new Reaction({
-    reactionBody: faker.lorem.sentence(),
-    username: randomUser.username,
-    thoughtId: randomThought._id,
-  });
-  reactions.push(reaction);
-}
-
-// Save all data to MongoDB
-Promise.all(users.map((user) => user.save()))
-  .then(() => Promise.all(thoughts.map((thought) => thought.save())))
-  .then(() => Promise.all(reactions.map((reaction) => reaction.save())))
-  .then(() => console.log('Seed data successfully added to database'))
-  .catch((err) => console.error(err))
-  .finally(() => mongoose.disconnect());
+seedDatabase();
