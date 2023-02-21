@@ -1,26 +1,42 @@
 const router = require('express').Router();
 const Thought = require('../../models/Thought')
+const Reaction = require('../../models/Reaction')
+const { ObjectId } = require("mongodb");
 
-
+//get all thoughts
 router.get('/', async (req, res) => { 
   const thoughts = await Thought.find()
   res.json(thoughts); 
-}); 
-
-
-router.put('/api/thoughts/:id', async (req, res) => {
+});
+//get thought by id
+router.get('/:thoughtId', async (req,res) => {
+  const {thoughtId} = req.params
+  const thoughts = await Thought.findById(ObjectId(thoughtId))
+  res.json(thoughts)
+})
+//update thought by id
+router.put('/:thoughtId', async (req, res) => {
+  const {thoughtId} = req.params;
   try {
-    const thought = await Thought.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const thought = await Thought.findByIdAndUpdate(ObjectId(thoughtId), req.body, { new: true });
     res.json(thought);
   } catch (err) {
     res.status(500).json(err);
   }
 });
 
-router.delete('/api/thoughts/:id', async (req, res) => {
+router.delete('/:thoughtId', async (req, res) => {
+  const {thoughtId} = req.params
   try {
-    await Thought.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Thought deleted' });
+   const thought = await Thought.findByIdAndDelete(ObjectId(thoughtId));
+   if (!thought) {
+    return res
+      .status(404)
+      .json({message: 'no thought found with this id'})
+   }
+await Reaction.deleteMany({thoughtId: thought.thoughtId})
+
+    res.json({ message: `thought Id: ${thoughtId} \n and associated reactions deleted` });
   } catch (err) {
     res.status(500).json(err);
   }
