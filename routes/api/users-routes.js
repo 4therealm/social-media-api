@@ -76,34 +76,20 @@ router.delete('/:userId', async (req, res) => {
     res.status(500).json(error)
   }
 })
-// router.delete('/:username', (req, res) => {
-//   User.findByIdAndDelete({ username: req.params.username })
-//     .then(dbUserData => {
-//       if (!dbUserData) {
-//         return res.status(404).json({ message: 'No user found with this username!' });
-//       }
-//       // remove user's associated thoughts from the database as well
-//       return Thought.deleteMany({ username: dbUserData.username });
-//     })
-//     .then(() => {
-//       res.json({ message: 'User and associated thoughts deleted!' });
-//     })
-//     .catch(err => res.status(500).json(err));
-// });
 
 
 // POST route for adding a friend to a user's friend list
-router.post('/api/users/:userId/friends/:friendId', async (req, res) => {
+router.post('/:userId/friends/:friendId', async (req, res) => {
   try {
     const { userId, friendId } = req.params;
     const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { $addToSet: { friends: friendId } },
+      ObjectId(userId),
+      { $addToSet: { friends: ObjectId(friendId) } },
       { new: true }
     );
     const updatedFriend = await User.findByIdAndUpdate(
-      friendId,
-      { $addToSet: { friends: userId } },
+      ObjectId(friendId),
+      { $addToSet: { friends: ObjectId(userId) } },
       { new: true }
     );
     res.status(200).json({ updatedUser, updatedFriend });
