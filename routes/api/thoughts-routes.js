@@ -14,6 +14,23 @@ router.get('/:thoughtId', async (req,res) => {
   const thoughts = await Thought.findById(ObjectId(thoughtId))
   res.json(thoughts)
 })
+//create thought
+router.post('/', async (req, res) => {
+  const {thoughtText, username} = req.body
+  try {
+    const newThought = await Thought.create({
+      thoughtText,
+      username
+    })
+    res
+      .status(201)
+      .json(newThought)
+  } catch (error) {
+    res
+      .status(500)
+      .json(error)
+  }
+})
 //update thought by id
 router.put('/:thoughtId', async (req, res) => {
   const {thoughtId} = req.params;
@@ -24,7 +41,7 @@ router.put('/:thoughtId', async (req, res) => {
     res.status(500).json(err);
   }
 });
-
+//delete thought and all associated reactions
 router.delete('/:thoughtId', async (req, res) => {
   const {thoughtId} = req.params
   try {
