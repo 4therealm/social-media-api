@@ -77,17 +77,39 @@ router.post('/:thoughtId/reactions', async (req, res) => {
   }
 });
 
-// DELETE route for removing a reaction from a thought
-router.delete('/api/thoughts/:thoughtId/reactions/:reactionId', async (req, res) => {
+//removing a reaction from a thought
+// router.delete('/:thoughtId/reactions/:reactionId', async (req, res) => {
+//   const { thoughtId, reactionId } = req.params;
+
+//   try {
+//     const updatedThought = await Thought.findByIdAndUpdate(
+//       ObjectId(thoughtId),
+//       { $pull: { reactions: reactionId } },
+//       { new: true }
+//     );
+//     await Reaction.findByIdAndDelete(reactionId);
+//     res.status(200).json({message:`reaction Id ${reactionId} deleted` });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json(error);
+//   }
+// });
+router.delete('/:thoughtId/reactions/:reactionId', async (req, res) => {
+  const { thoughtId, reactionId } = req.params;
+
   try {
-    const { thoughtId, reactionId } = req.params;
     const updatedThought = await Thought.findByIdAndUpdate(
-      ObjectId(thoughtId),
-      { $pull: { reactions: reactionId } },
+      thoughtId,
+      { $pull: { reactions: { _id: reactionId } } },
       { new: true }
     );
+
+    if (!updatedThought) {
+      return res.status(404).json({ message: 'Thought not found' });
+    }
+
     await Reaction.findByIdAndDelete(reactionId);
-    res.status(200).json(updatedThought);
+    res.status(200).json({ message: `Reaction with id ${reactionId} deleted` });
   } catch (error) {
     console.error(error);
     res.status(500).json(error);
