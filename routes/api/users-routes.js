@@ -29,9 +29,6 @@ router.get('/:username', (req, res) => {
     });
 });
 
-
-
-
 router.post('/', async (req, res) => {
   const {username, email, thoughts, friends} = req.body
   User.create({
@@ -44,25 +41,25 @@ router.post('/', async (req, res) => {
     .catch(err => res.status(500).json(err));
 });
 
-router.put('/api/users/:id', (req, res) => {
-  User.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
+router.put('/:username', (req, res) => {
+  User.findOneAndUpdate({ username: req.params.username }, req.body, { new: true })
     .then(dbUserData => {
       if (!dbUserData) {
-        return res.status(404).json({ message: 'No user found with this id!' });
+        return res.status(404).json({ message: 'No user found with this username!' });
       }
       res.json(dbUserData);
     })
     .catch(err => res.status(500).json(err));
 });
 
-router.delete('/api/users/:id', (req, res) => {
-  User.findOneAndDelete({ _id: req.params.id })
+router.delete('/:username', (req, res) => {
+  User.findOneAndDelete({ username: req.params.username })
     .then(dbUserData => {
       if (!dbUserData) {
-        return res.status(404).json({ message: 'No user found with this id!' });
+        return res.status(404).json({ message: 'No user found with this username!' });
       }
       // remove user's associated thoughts from the database as well
-      return Thought.deleteMany({ username: dbUserData.username });
+      // return Thought.deleteMany({ username: dbUserData.username });
     })
     .then(() => {
       res.json({ message: 'User and associated thoughts deleted!' });
