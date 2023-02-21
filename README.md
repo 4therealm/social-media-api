@@ -1,10 +1,9 @@
 # Social Network API
 ## Description
 * Homework #: 18  
-* Due: 
-* Repo:
-* Demo: 
-* Screenshots:
+* Due: 2/24/2023
+* Repo: https://github.com/4therealm/social-media-api
+* Demo: https://watch.screencastify.com/v/aSQbWggMF1lgIKdNBmf6
 
 ## User Story
 AS A social media startup
@@ -27,9 +26,14 @@ THEN I am able to successfully create, update, and delete users and thoughts in 
 THEN I am able to successfully create and delete reactions to thoughts and add and remove friends to a user’s friend list
 
 ## Installation
-
-
-
-## What i learned
-
-## Future Improvements
+```
+npm i
+```
+## Operation
+```
+npm run start
+```
+## Seeding
+```
+npm run seed
+```
