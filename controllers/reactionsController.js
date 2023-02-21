@@ -38,3 +38,21 @@ module.exports = {
       });
   },
 };
+
+// reactions: [
+//   {
+//     reactionBody: "Wow, great thought! ❤️",
+//     username: "patra",
+//   },
+//   {
+//     reactionBody: "I disagree...",
+//     username: "tim",
+//   },
+// ],
+
+// reactions: [
+//   {
+//     reactionBody: "That's awesome! 👍 ",
+//     username: "maxwell",
+//   },
+// ],

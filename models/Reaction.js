@@ -4,6 +4,7 @@ const {User, Thought} = require('../models')
 
 
 const ReactionSchema = new Schema({
+
   reactionBody: {
     type: String,
     required: true,
