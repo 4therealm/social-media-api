@@ -1,34 +1,32 @@
-const mongoose = require('mongoose'); 
-const { Schema, model } = mongoose;
-const {User, Thought} = require('../models')
+// models/Reaction.js
 
+const mongoose = require("mongoose");
+const { Schema } = mongoose;
 
-const ReactionSchema = new Schema({
-
-  reactionBody: {
-    type: String,
-    required: true,
-    maxlength: 280
+const ReactionSchema = new mongoose.Schema(
+  {
+    reactionBody: {
+      type: String,
+      required: true,
+      maxLength: 280,
+    },
+    username: {
+      type: String,
+      required: true,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      get: (timestamp) => dateFormat(timestamp),
+    },
   },
-  username: {
-    type: String,
-    required: true
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-    get: (timestamp) => dateFormat(timestamp)
+  {
+    toJSON: {
+      getters: true,
+    },
   }
-},
-{
-  toJSON: {
-    getters: true
-  },
-  id: false
-});
+);
 
-
-const Reaction = model('Reaction', ReactionSchema);
-
+const Reaction = mongoose.model("Reaction", ReactionSchema);
 
 module.exports = Reaction;

@@ -1,13 +1,8 @@
 const router = require('express').Router();
-const thoughtsRoutes = require('./thoughts-routes')
+const userRoutes = require('./users-routescopy');
+const thoughtRoutes = require('./thoughts-routescopy');
 
-const usersRoutes = require('./users-routes')
-router.get('/', (req, res) => {
-  res.json({ message: 'reached api/index' });
-});
-
-router.use('/thoughts', thoughtsRoutes)
-
-router.use('/users', usersRoutes)
+router.use('/users', userRoutes);
+router.use('/thoughts', thoughtRoutes);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const { User, Thought} = require("../models");
 const { ObjectId } = require("mongodb");
 
 module.exports = {
@@ -62,33 +62,34 @@ module.exports = {
       .catch((err) => res.status(500).json(err));
   },
 
-  addFriend(req, res) {
+  async addFriend(req, res) {
     const { userId, friendId } = req.params;
-    const updatedUser = User.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       ObjectId(userId),
       { $addToSet: { friends: ObjectId(friendId) } },
       { new: true }
     );
-    const updatedFriend = User.findByIdAndUpdate(
+    const updatedFriend = await User.findByIdAndUpdate(
       ObjectId(friendId),
       { $addToSet: { friends: ObjectId(userId) } },
       { new: true }
     );
     res.status(200).json({ updatedUser, updatedFriend });
   },
-
-  removeFriend(req, res) {
+  
+  async removeFriend(req, res) {
     const { userId, friendId } = req.params;
-    const updatedUser = User.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       ObjectId(userId),
       { $pull: { friends: ObjectId(friendId) } },
       { new: true }
     );
-    const updatedFriend = User.findByIdAndUpdate(
+    const updatedFriend = await User.findByIdAndUpdate(
       ObjectId(friendId),
       { $pull: { friends: ObjectId(userId) } },
       { new: true }
     );
     res.status(200).json({ updatedUser, updatedFriend });
-  },
+  }
+  
 };
