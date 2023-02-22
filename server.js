@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(routes);
 
 
-
+mongoose.set('debug', true)
 
 
 

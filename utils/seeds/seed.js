@@ -1,13 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('../../models/User');
 const Thought = require('../../models/Thought');
-
-// Connect to the database
-mongoose.connect('mongodb://127.0.0.1:27017/socialNetworkDB', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
+const connection = require('../../config/connection');
 const userData = [
   {
     "username": "maxwell",
@@ -34,7 +28,6 @@ const userData = [
     "friends": []
   }
 ];
-
 const thoughtData = [
   {
     thoughtText: "This is my first thought!",
@@ -61,17 +54,38 @@ const thoughtData = [
     ],
   },
 ];
+// Connect to the database
+mongoose.connect('mongodb://127.0.0.1:27017/socialNetworkDB', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+connection.once('open', async () => {
+  console.log('connected');
+  await User.deleteMany({});
+  await Thought.deleteMany({});
+  await User.collection.insertMany(userData)
+console.log(userData);
+  await Thought.collection.insertMany(thoughtData)
+console.log(thoughtData);
 
-// Save the instances to the database
-async function seedDatabase() {
-  try {
-    const newUsers = await User.insertMany(userData, { timeout: false });
-    const newThoughts = await Thought.insertMany(thoughtData, { timeout: false });
-    console.log(newUsers, newThoughts);
-    console.log('Data seeded successfully!');
-  } catch (error) {
-    console.error(error);
-  }
-}
+  console.log('Data seeded successfully!');
 
-seedDatabase();
+process.exit(0)})
+
+
+
+
+
+// // Save the instances to the database
+// async function seedDatabase() {
+//   try {
+//     const newUsers = await User.insertMany(userData, { timeout: false });
+//     const newThoughts = await Thought.insertMany(thoughtData, { timeout: false });
+//     console.log(newUsers, newThoughts);
+//     console.log('Data seeded successfully!');
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
+
+// seedDatabase();
