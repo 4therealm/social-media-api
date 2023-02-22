@@ -55,18 +55,22 @@ module.exports = {
   },
 
   async deleteThought(req, res) {
-    const { thoughtId } = req.params;
-    const thought = await Thought.findByIdAndRemove(ObjectId(thoughtId));
-
-    // !thought
-    //   ? res.status(404).json({ message: "No thought with this id!" })
+    const {thoughtId} = req.params
+    try {
+      const thought = await Thought.findByIdAndRemove(ObjectId(thoughtId));
       const user = await User.findOneAndUpdate(
-          { username: thought.username },
-          { $pull: { thoughts: ObjectId(thoughtId) } },
-          { new: true }
-        )
-        .catch((err) => res.status(500).json(err));
+        { thoughts:thought },
+        { $pull: { thoughts: ObjectId(thoughtId) } },
+        { new: true }
+      );
+     
+      res.json({ message: 'Thought successfully deleted!' });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json(err);
+    }
   },
+  
 
   // Add a Thought response
   addThoughtReaction(req, res) {
